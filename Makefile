@@ -21,3 +21,16 @@ docker-run:
 #  exécution des tests dans Docker
 docker-test:
 	docker run calculator:latest python -m pytest test.py -v
+help:
+    @echo "Available commands:"
+    @echo "  make help         Display this help message"
+    @echo "  make init         Set up the environment (create virtualenv and install dependencies)"
+    @echo "  make install      Install dependencies from requirements.txt"
+    @echo "  make build        Build the application (e.g., Docker image)"
+    @echo "  make rn           Run the application locally"
+    @echo "  make test         Run unit tests"
+    @echo "  make test-api     Test API endpoints using curl"
+    @echo "  make clean        Remove temporary and compiled files"
+    @echo "  make docker-build Build the Docker image for the app"
+    @echo "  make docker-run   Run the app in a Docker container"
+    @echo "  make docker-test  Run tests inside a Docker container"

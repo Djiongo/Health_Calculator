@@ -37,21 +37,33 @@ def bmr():
         height = float(data['height'])  # height in cm
         weight = float(data['weight'])  # weight in kg
         age = int(data['age'])         # age in years
-        gender = data['gender'].lower() # 'male' or 'female'
-        
+        gender = data['gender'].lower()  # 'male' or 'female'
+ 
+        # Validation
         if height <= 0 or weight <= 0 or age <= 0:
             return jsonify({'error': 'Height, weight, and age must be positive numbers'}), 400
         if gender not in ['male', 'female']:
             return jsonify({'error': 'Gender must be either "male" or "female"'}), 400
-            
+ 
         bmr_value = calculate_bmr(height, weight, age, gender)
-        
+ 
+        # Daily calorie needs based on activity level
+        daily_calories = {
+            'sedentary': round(bmr_value * 1.2, 2),
+            'light_exercise': round(bmr_value * 1.375, 2),
+            'moderate_exercise': round(bmr_value * 1.55, 2),
+            'heavy_exercise': round(bmr_value * 1.725, 2),
+        }
+ 
         return jsonify({
-            'bmr': round(bmr_value, 2)
+            'bmr': round(bmr_value, 2),
+            'daily_calories': daily_calories
         })
     except (KeyError, ValueError) as e:
-        return jsonify({'error': str(e)}), 400
- 
+        return jsonify({'error': f'Invalid input: {str(e)}'}), 400
+    except Exception as e:
+        return jsonify({'error': f'An unexpected error occurred: {str(e)}'}), 500
+    
 def get_bmi_category(bmi):
     if bmi < 18.5:
         return 'Underweight'
