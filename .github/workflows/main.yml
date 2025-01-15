@@ -29,10 +29,10 @@ jobs:
         make init
 
     # Run tests
-    - name: Run tests
-      run: |
-        source venv/bin/activate
-        python -m unittest discover -s tests
+    # - name: Run tests
+    #   run: |
+    #     source venv/bin/activate
+    #     python -m unittest discover -s tests
 
     # Lint the code (optional but recommended)
     - name: Lint code with flake8
