@@ -1,0 +1,68 @@
+name: Loan Calculator CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Setup Python
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9  # Define the Python version
+
+    # Install dependencies
+    - name: Install dependencies
+      run: |
+        make init
+
+    # Run tests
+    - name: Run tests
+      run: |
+        source venv/bin/activate
+        python -m unittest discover -s tests
+
+    # Lint the code (optional but recommended)
+    - name: Lint code with flake8
+      run: |
+        source venv/bin/activate
+        pip install flake8
+        flake8 .
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Deploy application
+    - name: Deploy to server
+      env:
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+      run: |
+        echo "${{ secrets.DEPLOY_KEY }}" > deploy_key.pem
+        chmod 600 deploy_key.pem
+        ssh -i deploy_key.pem -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP <<EOF
+        cd /path/to/your/project
+        git pull origin main
+        source venv/bin/activate
+        pip install -r requirements.txt
+        nohup python app.py &
+        EOF
