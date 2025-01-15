@@ -1,6 +1,9 @@
 .PHONY: install test run clean docker-build docker-run docker-test help
 
 # Installation des dépendances
+init:
+	python3 -m venv venv
+	venv/bin/pip install -r requirements.txt
 install:
 	pip install -r requirements.txt
 
@@ -29,7 +32,7 @@ docker-run:
 docker-test:
 	docker run calculator:latest python -m pytest test.py -v
 
-# Affichage des commandes disponibles
+# Aide pour les commandes disponibles
 help:
 	@echo "Available commands:"
 	@echo "  make help         Display this help message"
